@@ -1,0 +1,49 @@
+// ==UserScript==
+// @name         bookyay first
+// @namespace    http://tampermonkey.net/
+// @version      2025-06-18
+// @description  try to take over the world!
+// @author       You
+// @match        https://www.bookyay.com/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bookyay.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+
+    let clickInterval; // 用于存储 setInterval 的 ID，以便之后可以清除
+
+    function findAndClickZhangXueYou() {
+        // 查找所有带有 class "MuiTypography-root" 的元素
+        const elements = document.querySelectorAll('.MuiTypography-root');
+        let foundElement = null;
+
+        for (let i = 0; i < elements.length; i++) {
+            // 检查元素的文本内容是否包含“張學友”
+            if (elements[i].textContent.includes('張學友')) {
+                foundElement = elements[i];
+                break; // 找到第一个就停止
+            }
+        }
+
+        // 如果找到了，则点击该元素并清除定时器
+        if (foundElement) {
+            console.log('找到包含“張學友”且带有 MuiTypography-root class 的元素，正在尝试点击:', foundElement);
+            foundElement.click();
+            clearInterval(clickInterval); // 找到并点击后，停止持续查找
+            console.log('已停止持续查找。');
+        } else {
+            // 如果没找到，则继续等待下一次检查
+            console.log('未找到包含“張學友”且带有 MuiTypography-root class 的元素，继续等待...');
+        }
+    }
+
+    // 每 500 毫秒（0.5 秒）执行一次查找和点击
+    // 你可以根据页面的加载速度和需求调整这个时间间隔
+    clickInterval = setInterval(findAndClickZhangXueYou, 500);
+
+
+
+})();
