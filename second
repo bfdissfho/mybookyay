@@ -1,0 +1,197 @@
+// ==UserScript==
+// @name         bookyay second
+// @namespace    http://tampermonkey.net/
+// @version      2025-06-18
+// @description  try to take over the world!
+// @author       You
+// @match        https://www.bookyay.com/events/*
+// @match        https://www.bookyay.com/*
+// @match        https://www.bookyay.com/checkout/summary
+// @match        https://www.bookyay.com/checkout/confirm
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bookyay.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    let currentTaskInterval;
+    let globalTimeoutId;
+
+
+    function simulateClick(element) {
+        if (!element) {
+            console.warn('Attempted to simulate click on a null element.');
+            return;
+        }
+        const mouseEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+        });
+        element.dispatchEvent(mouseEvent);
+    }
+
+
+    function startNextTask(taskFunction, delay = 500) {
+
+        if (currentTaskInterval) {
+            clearInterval(currentTaskInterval);
+        }
+        console.log(`准备启动下一个任务: ${taskFunction.name}，延迟 ${delay}ms。`);
+        setTimeout(() => {
+
+            if (taskFunction === findAndClickBookButton || taskFunction === selectRandomTicket) {
+                currentTaskInterval = setInterval(taskFunction, 500);
+            } else {
+                taskFunction();
+            }
+        }, delay);
+    }
+
+
+    function findAndClickBookButton() {
+        const elements = document.querySelectorAll('span.MuiButton-label');
+        let foundElement = null;
+
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].textContent.includes('我要BOOK')) {
+                foundElement = elements[i];
+                break;
+            }
+        }
+
+        if (foundElement) {
+            console.log('功能二：找到包含“我要BOOK”的元素，正在尝试点击:', foundElement);
+            foundElement.click();
+            console.log('功能二：已完成“我要BOOK”点击。');
+            startNextTask(selectRandomTicket, 1000);
+        } else {
+            console.log('功能二：未找到“我要BOOK”元素，继续等待...');
+        }
+    }
+
+
+    function selectRandomTicket() {
+        const ticketButtons = [];
+        const possibleElements = document.querySelectorAll('.MuiBox-root button');
+
+        possibleElements.forEach(button => {
+            if (!button.hasAttribute('disabled') && !button.classList.contains('Mui-disabled')) {
+                if (button.textContent.includes('門票')) {
+                    ticketButtons.push(button);
+                }
+            }
+        });
+
+        if (ticketButtons.length > 0) {
+            const randomIndex = Math.floor(Math.random() * ticketButtons.length);
+            const selectedButton = ticketButtons[randomIndex];
+
+            console.log('功能三：找到多个非禁用门票选项，随机选择并尝试点击:', selectedButton);
+            selectedButton.click();
+            console.log('功能三：已完成门票选择。');
+            startNextTask(clickSvgButtonMultipleTimes, 1000); // 1秒后启动功能四
+        } else {
+            console.log('功能三：未找到有效的门票选项，或所有选项都已禁用，继续等待...');
+        }
+    }
+
+
+    function clickSvgButtonMultipleTimes() {
+        const svgButton = document.querySelector(
+            'button.MuiButton-containedPrimary:not([disabled]):not(.Mui-disabled) .MuiButton-label svg.MuiSvgIcon-root'
+        )?.closest('button');
+
+        if (svgButton) {
+            function buttonclick(){
+                svgButton.click()
+            }
+            buttonclick()
+            setTimeout(buttonclick, 500)
+            setTimeout(buttonclick, 1000)
+            setTimeout(buttonclick, 1500)
+            setTimeout(buttonclick, 2000)
+            setTimeout(buttonclick, 2500)
+            setTimeout(clickAllCheckboxesAfterDelay, 4000);
+        }
+    }
+
+
+
+
+    function clickAllCheckboxesAfterDelay() {
+
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let clickedCount = 0;
+
+            if (checkboxes.length > 0) {
+                console.log(`功能五：找到 ${checkboxes.length} 个符合条件的复选框，开始点击...`);
+                checkboxes.forEach(checkbox => {
+                    if (!checkbox.checked && !checkbox.disabled) {
+                        checkbox.click();
+                        clickedCount++;
+                        console.log(`功能五：点击了复选框: ${checkbox.outerHTML}`);
+                    }
+                });
+                console.log(`功能五：总共点击了 ${clickedCount} 个复选框。`);
+            } else {
+                console.log('功能五：未找到任何符合条件的复选框，跳过此步骤。');
+            }
+           setTimeout(clickBuyNowButtonAfterDelay, 1000)
+
+    }
+
+
+    function clickBuyNowButtonAfterDelay() {
+
+        const buyNowButton = Array.from(document.querySelectorAll('span.MuiButton-label'))
+        .find(span => span.textContent.includes('直接購買'));
+
+        if (buyNowButton) {
+            console.log('功能六：找到“直接购买”按钮，正在尝试点击:', buyNowButton);
+            buyNowButton.click();
+            console.log('功能六：“直接购买”按钮已点击。');
+        } else {
+            console.log('功能六：未找到“直接购买”按钮，跳过此步骤。');
+        }
+        setTimeout(next, 2000)
+
+    }
+
+    function next(){
+        const continueButton = Array.from(document.querySelectorAll('button.MuiButton-containedPrimary span.MuiButton-label'))
+        .find(span => span.textContent.includes('繼續'))
+        ?.closest('button');
+
+        if (continueButton) {
+            console.log('Found "繼續" button, attempting to click:', continueButton);
+            simulateClick(continueButton); // Use simulateClick for the click action
+            console.log('“继续” button clicked. Script finished.');
+        }
+        setTimeout(confirm, 4000)
+    }
+
+
+    function confirm(){
+        const confirmCheckoutButton = Array.from(document.querySelectorAll('button.MuiButton-containedPrimary span.MuiButton-label'))
+        .find(span => span.textContent.includes('確定結帳'))
+        ?.closest('button');
+        if (confirmCheckoutButton) {
+            simulateClick(confirmCheckoutButton);
+        }
+    }
+
+
+
+
+    console.log('脚本启动，开始执行第一个任务 (功能二)...');
+    currentTaskInterval = setInterval(findAndClickBookButton, 500);
+
+    globalTimeoutId = setTimeout(() => {
+        if (currentTaskInterval) {
+            clearInterval(currentTaskInterval);
+            console.log('全局超时：部分或所有任务未在指定时间内完成，已停止。');
+        }
+    }, 60000); // 60000 毫秒 = 60 秒 全局超时
+})();
