@@ -6,6 +6,8 @@
 // @author       You
 // @match        https://www.bookyay.com/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bookyay.com
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mybookyay/refs/heads/main/first
+// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mybookyay/refs/heads/main/first
 // @grant        none
 // ==/UserScript==
 
