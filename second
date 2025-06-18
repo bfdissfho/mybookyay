@@ -9,6 +9,8 @@
 // @match        https://www.bookyay.com/checkout/summary
 // @match        https://www.bookyay.com/checkout/confirm
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=bookyay.com
+// @updateURL    https://raw.githubusercontent.com/bfdissfho/mybookyay/refs/heads/main/second
+// @downloadURL  https://raw.githubusercontent.com/bfdissfho/mybookyay/refs/heads/main/second
 // @grant        none
 // ==/UserScript==
 
